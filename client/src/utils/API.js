@@ -5,7 +5,7 @@ export const getMe = (token) => {
       'Content-Type': 'application/json',
       authorization: `Bearer ${token}`,
     },
-  });
+  });bookData
 };
 
 export const createUser = (userData) => {
