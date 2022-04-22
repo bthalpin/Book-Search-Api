@@ -4,23 +4,22 @@ export const ADD_USER = gql`
   mutation addUser($username: String!, $email: String!,$password: String!) {
     addUser(username: $username, email: $email, password: $password) {
         token
-        user:{
+        user {
             _id
             username
-            email
+            
         }
     }
   }
   `;
 
-  export const LOGIN = gql`
-    mutation login($username: String!, $email: String!,$password: String!) {
-      login(username: $username, email: $email, password: $password) {
+  export const LOGIN_USER = gql`
+    mutation login($email: String!,$password: String!) {
+      login(email: $email, password: $password) {
         token
-        user:{
+        user {
             _id
             username
-            email
         }
         
       }
@@ -28,23 +27,19 @@ export const ADD_USER = gql`
   `;
   
   export const SAVE_BOOK = gql`
-    mutation saveBook($bookId: ID!) {
-      saveBook(bookId: $bookId) {
-        token
-        user:{
-            _id
-            username
-            email
-            savedBooks:{
-                _id
-                authors
-                description
-                bookId
-                image
-                link
-                title
-            }
+    mutation saveBook($description:String!,$bookId: String,$image:String,$link:String,$title:String) {
+      saveBook(description:$description,bookId: $bookId,image:$image,link:$link,title:$title) {
+        
+        savedBooks {
+            description
+            bookId
+            image
+            link
+            title
         }
+
+        
+       
         
       }
     }
@@ -53,13 +48,11 @@ export const ADD_USER = gql`
   export const DELETE_BOOK = gql`
     mutation deleteBook($bookId: ID!) {
       deleteBook(bookId: $bookId) {
-        token
-        user:{
-            _id
+            _id    
             username
             email
-            savedBooks:{
-                _id
+            savedBooks {
+                
                 authors
                 description
                 bookId
@@ -67,7 +60,7 @@ export const ADD_USER = gql`
                 link
                 title
             }
-        }
+        
         
       }
     }

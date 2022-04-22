@@ -6,9 +6,8 @@ export const QUERY_MY_PROFILE = gql`
         _id
         username
         email
-        savedBooks:{
-            _id
-            authors
+        savedBooks {
+            
             description
             bookId
             image
