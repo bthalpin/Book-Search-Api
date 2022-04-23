@@ -2,14 +2,14 @@ const jwt = require('jsonwebtoken');
 
 // set token secret and expiration date
 const secret = 'mysecretsshhhhh';
-const expiration = '2h';
+const expiration = '1000';
 
 module.exports = {
   // function for our authenticated routes
-  authMiddleware: function ({req}) {
+  authMiddleware: function ({req,res}) {
     // console.log('AUTH',req?.body,req?.headers,req?.query)
     // allows token to be sent via  req.query or headers
-    let token =req.body.token || req.query.token || req.headers.authorization;
+    let token = req.query.token || req.headers.authorization;
     console.log('here',token)
     // ["Bearer", "<tokenvalue>"]
     if (req.headers.authorization) {
@@ -28,7 +28,7 @@ module.exports = {
       console.log(req.user)
     } catch {
       console.log('Invalid token');
-      return res.status(400).json({ message: 'invalid token!' });
+      return res.status(400).json({ message: token });
     }
 
     // send to next endpoint

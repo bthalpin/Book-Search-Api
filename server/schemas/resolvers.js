@@ -45,11 +45,11 @@ const resolvers = {
       // const bookData={...args}
       // console.log(bookData.authors,'HEEEEETTTTTTTTTEEEEE',args)
       if (context.user) {
-        return User.findOneAndUpdate(
+        return await User.findOneAndUpdate(
           { _id: context.user._id },
           {
             $addToSet: {
-              savedBooks: {description,bookId,image,link,title}
+              savedBooks: {authors,description,bookId,image,link,title}
             },
           },
           {
