@@ -70,8 +70,6 @@ const SearchBooks = () => {
     if (!token) {
       return false;
     }
-    const currentUser = Auth.getProfile().data._id
-    console.log(currentUser)
     try {
       // const savedBook = bookData.find
       console.log(bookToSave)
