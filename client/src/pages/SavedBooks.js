@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client';
 import { QUERY_MY_PROFILE } from '../utils/queries';
 import { DELETE_BOOK } from '../utils/mutations';
 
-// import { getMe, deleteBook } from '../utils/API';
+
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
@@ -19,18 +19,18 @@ const SavedBooks = () => {
   const {loading, data} = useQuery(QUERY_MY_PROFILE,{fetchPolicy: 'cache-and-network',});
   const [deleteBook, {error}] = useMutation(DELETE_BOOK);
   
-  // TODO -get userProfile apollo
+  
   useEffect(() => {
     
     const getUserData = async () => {
-      console.log(userData,data,loading)
+      
       if (loading){
         return
       }
       try {
         const user = await data.myProfile
         const token = Auth.loggedIn() ? Auth.getToken() : null;
-        console.log(token,data,loading,user)
+        
         if (!token) {
           return false;
         }
@@ -48,8 +48,8 @@ const SavedBooks = () => {
     getUserData();
   }, [loading,data]);
 
-  // TODO remove saved book
-  // create function that accepts the book's mongo _id value as param and deletes the book from the database
+  
+  // create function that accepts the book's mongo _id value as param and deletes the book using graphql mutation
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -65,16 +65,16 @@ const SavedBooks = () => {
       if (!data) {
         throw new Error('something went wrong!');
       }
-      console.log(data.deleteBook)
-    //   const updatedUser = await response.json();
+      
+      // update user savedBooks array
       setUserData(data.deleteBook);
-    //   // upon success, remove book's id from localStorage
+      // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }
   };
-  console.log(userDataLength,userData,'loading')
+  
   // if data isn't here yet, say so
   if (!userDataLength) {
     return <h2>LOADING...</h2>;
@@ -96,7 +96,7 @@ const SavedBooks = () => {
         <CardColumns>
           {userData.savedBooks.map((book) => {
             return (
-              <Card key={book.bookId} borxzxder='dark'>
+              <Card key={book.bookId} border='dark'>
                 {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
                 <Card.Body>
                   <Card.Title>{book.title}</Card.Title>

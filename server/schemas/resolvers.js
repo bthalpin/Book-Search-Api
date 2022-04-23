@@ -3,9 +3,10 @@ const { User} = require('../models');
 const { signToken } = require('../utils/auth');
 
 const resolvers = {
+  // Returns user information for the savedBooks page
   Query: {
     myProfile: async (parent, args, context) => {
-      console.log(context.user)
+      
       if (context.user) {
         return await User.findOne({ _id: context.user._id }).populate('savedBooks');
       }
@@ -14,36 +15,36 @@ const resolvers = {
   },
 
   Mutation: {
+
+    // Creates user on signup
     addUser: async (parent, { username, email, password }) => {
-      console.log('here',username,email,password)
       const user = await User.create({ username, email, password });
-      console.log(user)
+      
+      // Creates jwt
       const token = signToken(user);
-      console.log(token,user)
       return { token, user };
     },
-    login: async (parent, { email, password }) => {
-      console.log(email, password,'login')
+
+    // Verifies login
+    login: async (parent, { email, password }) => {     
       const user = await User.findOne({ email });
-      console.log(user)
+      
       if (!user) {
         throw new AuthenticationError('No user found with this email address');
       }
-
       const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
         throw new AuthenticationError('Incorrect credentials');
       }
-
       const token = signToken(user);
-      console.log(user,token,'END LOGIN')
       return { token, user };
     },
+
+    // Saves bookinformation to user
     saveBook: async (parent, {authors,description,bookId,image,link,title}, context) => {
-      console.log('logged',context.user,bookId,authors, typeof authors)
-      // const bookData={...args}
-      // console.log(bookData.authors,'HEEEEETTTTTTTTTEEEEE',args)
+      
+      // If logged in
       if (context.user) {
         return await User.findOneAndUpdate(
           { _id: context.user._id },
@@ -60,7 +61,11 @@ const resolvers = {
       }
       throw new AuthenticationError('You need to be logged in!');
     },
+
+    // Deletes book from user
     deleteBook: async (parent, { bookId }, context) => {
+
+      // if logged in
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: context.user._id },

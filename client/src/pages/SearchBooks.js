@@ -14,14 +14,17 @@ const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
+
+  // Error message if not all the data is provided by the google books api
   const [errorMessage, setErrorMessage] = useState('');
+
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
-  
+  // Mutation to save the book through graphql
   const [saveBook, {error,data}] = useMutation(SAVE_BOOK);
-  // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
-  // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
+
+  
   useEffect(() => {
     
     return () => saveBookIds(savedBookIds);
@@ -58,33 +61,35 @@ const SearchBooks = () => {
       console.error(err);
     }
   };
-  // TODO save book using apollo
+  
   // create function to handle saving a book to our database
   const handleSaveBook = async (bookId) => {
 
     // find the book in `searchedBooks` state by the matching id
     const bookToSave =  await searchedBooks.find((book) => book.bookId === bookId);
-    console.log(bookId,'bookId',bookToSave)
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-    console.log(token)
+
+    // Return if no token
     if (!token) {
       return false;
     }
     try {
-      // const savedBook = bookData.find
-      console.log(bookToSave)
+      // Prevents trying to save the book if the necessary information is not provided by google books api
       if (!bookToSave.title || !bookToSave.description || !bookToSave.bookId){
         setErrorMessage('Unfortunately That Book Does Not Have Enough Information To Save')
         return
       } 
+
+      // Save book mutation passing in the book data selected
       const {data} = await saveBook({
         variables: {...bookToSave},
       });
 
-      console.log(savedBookIds,data)
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookId]);
+
+      // Clears error message on successful save
       setErrorMessage('')
     } catch (err) {
       console.error(err);

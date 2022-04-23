@@ -14,7 +14,6 @@ export const QUERY_MY_PROFILE = gql`
             link
             title
         }
-        
     }
   }
 `;

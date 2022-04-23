@@ -8,15 +8,16 @@ import SearchBooks from './pages/SearchBooks';
 import SavedBooks from './pages/SavedBooks';
 import Navbar from './components/Navbar';
 
+
 const httpLink = createHttpLink({
   uri: '/graphql',
 });
 
+// Gets token from localStorage if it exists and checks for expiration before sending
 const authLink = setContext((_, { headers }) => {
   let token = localStorage.getItem('id_token');
   if (token&&decode(token).exp<Date.now()/1000) {
     token = ''
-   
   }
   return {
     headers: {
