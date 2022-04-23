@@ -14,7 +14,7 @@ const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
-
+  const [errorMessage, setErrorMessage] = useState('');
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
@@ -23,6 +23,7 @@ const SearchBooks = () => {
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
   useEffect(() => {
+    
     return () => saveBookIds(savedBookIds);
   });
 
@@ -73,6 +74,10 @@ const SearchBooks = () => {
     try {
       // const savedBook = bookData.find
       console.log(bookToSave)
+      if (!bookToSave.title || !bookToSave.description || !bookToSave.bookId){
+        setErrorMessage('Unfortunately That Book Does Not Have Enough Information To Save')
+        return
+      } 
       const {data} = await saveBook({
         variables: {...bookToSave},
       });
@@ -80,6 +85,7 @@ const SearchBooks = () => {
       console.log(savedBookIds,data)
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookId]);
+      setErrorMessage('')
     } catch (err) {
       console.error(err);
     }
@@ -106,6 +112,7 @@ const SearchBooks = () => {
                 <Button type='submit' variant='success' size='lg'>
                   Submit Search
                 </Button>
+                
               </Col>
             </Form.Row>
           </Form>
@@ -114,11 +121,14 @@ const SearchBooks = () => {
 
       <Container>
         <h2>
+          
           {searchedBooks.length
             ? `Viewing ${searchedBooks.length} results:`
             : 'Search for a book to begin'}
         </h2>
+        <p className="text-danger">{errorMessage}</p>
         <CardColumns>
+        
           {searchedBooks.map((book) => {
             return (
               <Card key={book.bookId} border='dark'>
@@ -129,6 +139,7 @@ const SearchBooks = () => {
                   <Card.Title>{book.title}</Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
+                  
                   {Auth.loggedIn() && (
                     <Button
                       disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
